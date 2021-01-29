@@ -57,57 +57,49 @@ function Show-SqlBootstrapLog
 }
 
 
-try
+$configFile = Join-Path -Path $PSScriptRoot -ChildPath "010.AzureDevOpsDsc.SqlServer.config.ps1"
+. $configFile
+
+
+# By switching to 'SilentlyContinue' should theoretically increase the download speed.
+$previousProgressPreference = $ProgressPreference
+$ProgressPreference = 'SilentlyContinue'
+
+
+# Download SQL Server media
+if (-not (Test-Path -Path $ConfigurationData.AllNodes.ImagePath))
 {
-    $configFile = Join-Path -Path $PSScriptRoot -ChildPath "010.AzureDevOpsDsc.SqlServer.config.ps1"
-    . $configFile
+    # Download the EXE used to download the ISO
+    Write-Verbose -Message "Start downloading the SQL Server media at $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss')..." -Verbose
+    Invoke-WebRequest -Uri $script:mockSourceDownloadExeUrl -OutFile $ConfigurationData.AllNodes.DownloadExePath | Out-Null
 
+    # Download ISO using the EXE
+    $imageDirectoryPath = Split-Path -Path $ConfigurationData.AllNodes.ImagePath -Parent
+    $downloadExeArgumentList = '/ENU /Quiet /HideProgressBar /Action=Download /Language=en-US /MediaType=ISO /MediaPath={0}' -f $imageDirectoryPath
+    Start-Process -FilePath $ConfigurationData.AllNodes.DownloadExePath `
+                -ArgumentList $downloadExeArgumentList `
+                -Wait
 
-    # By switching to 'SilentlyContinue' should theoretically increase the download speed.
-    $previousProgressPreference = $ProgressPreference
-    $ProgressPreference = 'SilentlyContinue'
+    # Rename the ISO and generate SHA1 hash
+    Rename-Item -Path $ConfigurationData.AllNodes.DownloadIsoPath `
+                -NewName $(Split-Path -Path $ConfigurationData.AllNodes.ImagePath -Leaf) | Out-Null
+    Write-Verbose -Message ('SQL Server media file has SHA1 hash ''{0}''.' -f (Get-FileHash -Path $ConfigurationData.AllNodes.ImagePath -Algorithm 'SHA1').Hash) -Verbose
 
+    # Return to previous 'ProgressPreference' value
+    $ProgressPreference = $previousProgressPreference
 
-    # Download SQL Server media
+    # Double check that the SQL media was downloaded.
     if (-not (Test-Path -Path $ConfigurationData.AllNodes.ImagePath))
     {
-        # Download the EXE used to download the ISO
-        Write-Verbose -Message "Start downloading the SQL Server media at $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss')..." -Verbose
-        Invoke-WebRequest -Uri $script:mockSourceDownloadExeUrl -OutFile $ConfigurationData.AllNodes.DownloadExePath | Out-Null
-
-        # Download ISO using the EXE
-        $imageDirectoryPath = Split-Path -Path $ConfigurationData.AllNodes.ImagePath -Parent
-        $downloadExeArgumentList = '/ENU /Quiet /HideProgressBar /Action=Download /Language=en-US /MediaType=ISO /MediaPath={0}' -f $imageDirectoryPath
-        Start-Process -FilePath $ConfigurationData.AllNodes.DownloadExePath `
-                    -ArgumentList $downloadExeArgumentList `
-                    -Wait
-
-        # Rename the ISO and generate SHA1 hash
-        Rename-Item -Path $ConfigurationData.AllNodes.DownloadIsoPath `
-                    -NewName $(Split-Path -Path $ConfigurationData.AllNodes.ImagePath -Leaf) | Out-Null
-        Write-Verbose -Message ('SQL Server media file has SHA1 hash ''{0}''.' -f (Get-FileHash -Path $ConfigurationData.AllNodes.ImagePath -Algorithm 'SHA1').Hash) -Verbose
-
-        # Return to previous 'ProgressPreference' value
-        $ProgressPreference = $previousProgressPreference
-
-        # Double check that the SQL media was downloaded.
-        if (-not (Test-Path -Path $ConfigurationData.AllNodes.ImagePath))
-        {
-            Write-Warning -Message ('SQL media could not be downloaded, can not run the integration test.')
-            return
-        }
-        else
-        {
-            Write-Verbose -Message "Finished downloading the SQL Server media iso at $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss')." -Verbose
-        }
+        Write-Warning -Message ('SQL media could not be downloaded, can not run the integration test.')
+        return
     }
     else
     {
-        Write-Verbose -Message 'SQL Server media is already present/downloaded.' -Verbose
+        Write-Verbose -Message "Finished downloading the SQL Server media iso at $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss')." -Verbose
     }
-
 }
-finally
+else
 {
-    Restore-TestEnvironment -TestEnvironment $script:testEnvironment
+    Write-Verbose -Message 'SQL Server media is already present/downloaded.' -Verbose
 }
