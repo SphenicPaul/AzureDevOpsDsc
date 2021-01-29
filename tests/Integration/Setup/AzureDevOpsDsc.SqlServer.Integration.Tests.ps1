@@ -72,7 +72,7 @@ if (-not (Test-Path -Path $ConfigurationData.AllNodes.ImagePath))
 {
     # Download the EXE used to download the ISO
     Write-Verbose -Message "Start downloading the SQL Server media at $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss')..." -Verbose
-    Invoke-WebRequest -Uri $script:mockSourceDownloadExeUrl -OutFile $ConfigurationData.AllNodes.DownloadExePath | Out-Null
+    Invoke-WebRequest -Uri $ConfigurationData.AllNodes.SourceDownloadExeUrl -OutFile $ConfigurationData.AllNodes.DownloadExePath | Out-Null
 
     # Download ISO using the EXE
     $imageDirectoryPath = Split-Path -Path $ConfigurationData.AllNodes.ImagePath -Parent
