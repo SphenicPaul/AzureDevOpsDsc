@@ -193,8 +193,14 @@ stages:
 
           - powershell: |
               ./build.ps1 -Tasks test -CodeCoverageThreshold 0 -PesterScript @(
-                'tests/Integration/'
+                  # Run the integration tests in a specific group order.
+                  # Group 1
+                  'tests/Integration/Setup/AzureDevOpsDsc.SqlServer.Integration.Tests.ps1'
+                  # Group 2
+                  #'tests/Integration/Setup/AzureDevOpsDsc.AzureDevOps.Integration.Tests.ps1'
+
               )
+
             name: test
             displayName: 'Run Integration Tests'
             env:
