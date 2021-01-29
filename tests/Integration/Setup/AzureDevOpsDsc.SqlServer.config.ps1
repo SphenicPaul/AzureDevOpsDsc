@@ -30,10 +30,10 @@ $ConfigurationData = @{
 
             # Database Engine properties.
             DatabaseEngineNamedInstanceName         = 'AZDEVOPS'
-            DatabaseEngineNamedInstanceFeatures     = 'SQLENGINE'           # ',REPLICATION,AS,CONN,BC,SDK'
+            DatabaseEngineNamedInstanceFeatures     = 'SQLENGINE,FULLTEXT'           # ',REPLICATION,AS,CONN,BC,SDK'
             #AnalysisServicesMultiServerMode         = 'MULTIDIMENSIONAL'
             DatabaseEngineDefaultInstanceName       = 'MSSQLSERVER'
-            DatabaseEngineDefaultInstanceFeatures   = 'SQLENGINE'           # ',REPLICATION,CONN,BC,SDK'
+            DatabaseEngineDefaultInstanceFeatures   = 'SQLENGINE,FULLTEXT'           # ',REPLICATION,CONN,BC,SDK'
 
             # General SqlSetup properties
             Collation                               = 'Latin1_General_CI_AS'
