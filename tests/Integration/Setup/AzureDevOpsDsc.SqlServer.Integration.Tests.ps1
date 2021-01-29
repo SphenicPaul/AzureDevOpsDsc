@@ -57,7 +57,8 @@ function Show-SqlBootstrapLog
 }
 
 
-$configFile = Join-Path -Path $PSScriptRoot -ChildPath "010.AzureDevOpsDsc.SqlServer.config.ps1"
+# Dot-source configuration to be used in subsquent tests/executions
+$configFile = Join-Path -Path $PSScriptRoot -ChildPath "AzureDevOpsDsc.SqlServer.config.ps1"
 . $configFile
 
 
