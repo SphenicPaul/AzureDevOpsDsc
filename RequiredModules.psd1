@@ -24,6 +24,7 @@
 
     # Prerequisites modules needed for examples or integration tests
     PSDscResources              = '2.12.0.0'
+    SqlServerDsc                = '15.0.1'
     StorageDsc                  = '4.9.0.0'
     NetworkingDsc               = '7.4.0.0'
 }
