@@ -218,7 +218,7 @@ try
                 $resourceCurrentState.Features                   | Should -Be $ConfigurationData.AllNodes.DatabaseEngineNamedInstanceFeatures
                 $resourceCurrentState.ForceReboot                | Should -BeNullOrEmpty
                 $resourceCurrentState.FTSvcAccount               | Should -BeNullOrEmpty
-                $resourceCurrentState.FTSvcAccountUsername       | Should -BeNullOrEmpty
+                $resourceCurrentState.FTSvcAccountUsername       | Should -Be ('NT Service\MSSQLFDLauncher${0}' -f (Split-Path -Path $ConfigurationData.AllNodes.DatabaseEngineNamedInstanceName -Leaf))
                 $resourceCurrentState.InstallSharedDir           | Should -Be $ConfigurationData.AllNodes.InstallSharedDir
                 $resourceCurrentState.InstallSharedWOWDir        | Should -Be $ConfigurationData.AllNodes.InstallSharedWOWDir
                 $resourceCurrentState.InstallSQLDataDir          | Should -Be (Join-Path -Path $ConfigurationData.AllNodes.InstallSQLDataDir -ChildPath "$($ConfigurationData.AllNodes.SqlServerInstanceIdPrefix).$($ConfigurationData.AllNodes.DatabaseEngineNamedInstanceName)\MSSQL")
