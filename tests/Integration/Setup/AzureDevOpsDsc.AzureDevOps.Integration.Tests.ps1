@@ -121,30 +121,26 @@ else
 }
 
 
-# Install Azure DevOps using the EXE
-$previousLocation = Get-Location
-
+# Install Azure DevOps Server using the EXE
 Write-Verbose -Message 'Installing Azure DevOps Server...' -Verbose
-Set-Location -Path $(Split-Path -Path $ConfigurationData.AllNodes.DownloadExePath -Parent)
-$expression = '{0} /CustomInstallPath {1}" /Full /NoRefresh /NoRestart /NoWeb /Passive /ProductKey TRIAL /Silent /Log {2}' -f $azureDevOpsServerVersionData.ExeName, $ConfigurationData.AllNodes.InstallPath, $ConfigurationData.AllNodes.LogFilePath
-Write-Verbose -Message $('Executing: "{0}"' -f $expression) -Verbose
-& $expression
+$downloadExeArgumentList = '/CustomInstallPath {0}" /Full /NoRefresh /NoRestart /NoWeb /Passive /ProductKey TRIAL /Silent /Log {1}' -f $ConfigurationData.AllNodes.InstallPath, $ConfigurationData.AllNodes.LogFilePath
+Start-Process -FilePath $ConfigurationData.AllNodes.DownloadExePath `
+              -ArgumentList $downloadExeArgumentList `
+              -Wait
 Write-Verbose -Message 'Successfully installed Azure DevOps Server.' -Verbose
 
-Write-Verbose -Message 'Outputting AzureDevOps installation logs...' -Verbose
+Write-Verbose -Message 'Outputting Azure DevOps Server, installation logs...' -Verbose
 Show-AzureDevOpsLog -Path $($azureDevOpsServerVersionData.LogsDirectoryPath + '\*.txt')
 
 
-
+# Configure Azure DevOps Server using TFSCONFIG
 Write-Verbose -Message 'Configuring Azure DevOps Server...' -Verbose
-Set-Location -Path $(Join-Path -Path $ConfigurationData.AllNodes.InstallPath -ChildPath 'Tools')
-$expression = 'TODO: See "https://docs.microsoft.com/en-us/azure/devops/server/command-line/tfsconfig-cmd?view=azure-devops-2019#unattend"' # TODO:
-Write-Verbose -Message $('Executing: "{0}" ...' -f $expression) -Verbose
-#& $expression
+$tfsConfigExePath = Join-Path -Path $(Join-Path -Path $ConfigurationData.AllNodes.InstallPath -ChildPath 'Tools') -ChildPath 'tfsconfig.exe'
+$tfsConfigExeArgumentList = '' # TODO: See https://docs.microsoft.com/en-us/azure/devops/server/command-line/tfsconfig-cmd?view=azure-devops-2019#unattend
+#Start-Process -FilePath $tfsConfigExePath `
+#              -ArgumentList $tfsConfigExeArgumentList `
+#              -Wait
 Write-Verbose -Message 'Successfully configured Azure DevOps Server.' -Verbose
 
-Write-Verbose -Message 'Outputting AzureDevOps configuration logs...' -Verbose
+Write-Verbose -Message 'Outputting Azure DevOps Server, configuration logs...' -Verbose
 Show-AzureDevOpsLog -Path 'C:\ProgramData\Microsoft\Azure DevOps\Server Configuration\Logs\*.log'
-
-Set-Location -Path $previousLocation
-
