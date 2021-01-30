@@ -6,7 +6,7 @@ Import-Module -Name $script:azureDevOpsDscCommonModulePath
 
 
 # Define localization data
-$script:localizedData = Get-LocalizedData -DefaultUICulture 'en-US'
+#$script:localizedData = Get-LocalizedData -DefaultUICulture 'en-US'
 
 
 # Define 'enums' for module
