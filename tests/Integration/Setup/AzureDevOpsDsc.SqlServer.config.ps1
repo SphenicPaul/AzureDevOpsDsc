@@ -226,7 +226,7 @@ Configuration DSC_SqlSetup_CreateDependencies_Config
 #>
 Configuration DSC_SqlSetup_InstallDatabaseEngineNamedInstanceAsSystem_Config
 {
-    Import-DscResource -ModuleName 'SqlServerDsc'
+    Import-DscResource -ModuleName 'SqlServerDsc' -ModuleVersion '15.0.1'
 
     node $AllNodes.NodeName
     {
