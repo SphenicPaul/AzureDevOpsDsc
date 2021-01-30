@@ -77,6 +77,10 @@ $ConfigurationData = @{
             #SqlAgentServiceSecondaryAccountPassword = 'yig-C^Equ3'
 
             #CertificateFile                         = $env:DscPublicCertificatePath
+
+
+            AzureDevOpsServiceAccountUserName        = "$env:COMPUTERNAME\svc-AzureDevOps"
+            AzureDevOpsServiceAccountPassword        = 'yig-C^Equ3'
         }
     )
 }
@@ -116,6 +120,11 @@ $SqlAgentServicePrimaryCredential = New-Object `
 #     -TypeName System.Management.Automation.PSCredential `
 #     -ArgumentList @($ConfigurationData.AllNodes.SqlAgentServiceSecondaryAccountUserName,
 #         (ConvertTo-SecureString -String $ConfigurationData.AllNodes.SqlAgentServiceSecondaryAccountPassword -AsPlainText -Force))
+
+$AzureDevOpsServiceCredential = New-Object `
+    -TypeName System.Management.Automation.PSCredential `
+    -ArgumentList @($ConfigurationData.AllNodes.AzureDevOpsServiceAccountUserName,
+        (ConvertTo-SecureString -String $ConfigurationData.AllNodes.AzureDevOpsServiceAccountPassword -AsPlainText -Force))
 
 
 <#
@@ -190,6 +199,13 @@ Configuration DSC_SqlSetup_CreateDependencies_Config
             Ensure   = 'Present'
             UserName = Split-Path -Path $SqlAdministratorCredential.UserName -Leaf
             Password = $SqlAdministratorCredential
+        }
+
+        User 'CreateAzureDevOpsServiceAccount'
+        {
+            Ensure   = 'Present'
+            UserName = Split-Path -Path $AzureDevOpsServiceCredential.UserName -Leaf
+            Password = $AzureDevOpsServiceCredential
         }
 
         WindowsFeature 'NetFramework45'
