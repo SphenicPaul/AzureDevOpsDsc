@@ -199,3 +199,116 @@ Configuration DSC_SqlSetup_CreateDependencies_Config
         }
     }
 }
+
+
+<#
+    .SYNOPSIS
+        Installs a named instance of Database Engine and Analysis Services.
+
+    .NOTES
+        This is the instance that is used for many of the other integration tests.
+#>
+Configuration DSC_SqlSetup_InstallDatabaseEngineNamedInstanceAsSystem_Config
+{
+    Import-DscResource -ModuleName 'SqlServerDsc'
+
+    node $AllNodes.NodeName
+    {
+        SqlSetup 'Integration_Test'
+        {
+            FeatureFlag            = @('DetectionSharedFeatures')
+
+            InstanceName           = $Node.DatabaseEngineNamedInstanceName
+            Features               = $Node.DatabaseEngineNamedInstanceFeatures
+            SourcePath             = "$($Node.DriveLetter):\"
+            SqlSvcStartupType      = 'Automatic'
+            AgtSvcStartupType      = 'Manual'
+            BrowserSvcStartupType  = 'Automatic'
+            SecurityMode           = 'SQL'
+            SAPwd                  = $SqlAdministratorCredential
+            SQLCollation           = $Node.Collation
+            SQLSvcAccount          = $SqlServicePrimaryCredential
+            AgtSvcAccount          = $SqlAgentServicePrimaryCredential
+            # ASServerMode           = $Node.AnalysisServicesMultiServerMode
+            # AsSvcStartupType       = 'Automatic'
+            # ASCollation            = $Node.Collation
+            # ASSvcAccount           = $SqlServicePrimaryCredential
+            InstanceDir            = $Node.InstanceDir
+            InstallSharedDir       = $Node.InstallSharedDir
+            InstallSharedWOWDir    = $Node.InstallSharedWOWDir
+            InstallSQLDataDir      = $Node.InstallSQLDataDir
+            SQLUserDBDir           = $Node.SQLUserDBDir
+            SQLUserDBLogDir        = $Node.SQLUserDBLogDir
+            SQLBackupDir           = $Node.SQLBackupDir
+            UpdateEnabled          = $Node.UpdateEnabled
+            SuppressReboot         = $Node.SuppressReboot
+            ForceReboot            = $Node.ForceReboot
+            SqlTempDbFileCount     = $Node.SqlTempDbFileCount
+            SqlTempDbFileSize      = $Node.SqlTempDbFileSize
+            SqlTempDbFileGrowth    = $Node.SqlTempDbFileGrowth
+            SqlTempDbLogFileSize   = $Node.SqlTempDbLogFileSize
+            SqlTempDbLogFileGrowth = $Node.SqlTempDbLogFileGrowth
+            NpEnabled              = $true
+            TcpEnabled             = $true
+            UseEnglish             = $true
+            SkipRule               = 'ServerCoreBlockUnsupportedSxSCheck'
+
+            # This must be set if using SYSTEM account to install.
+            SQLSysAdminAccounts   = @(
+                Split-Path -Path $SqlAdministratorCredential.UserName -Leaf
+                <#
+                    Must have permission to properties IsClustered and
+                    IsHadrEnable for SqlAlwaysOnService.
+                #>
+                Split-Path -Path $SqlInstallCredential.UserName -Leaf
+            )
+
+            # This must be set if using SYSTEM account to install.
+            ASSysAdminAccounts    = @(
+                Split-Path -Path $SqlAdministratorCredential.UserName -Leaf
+            )
+        }
+    }
+}
+
+
+<#
+    .SYNOPSIS
+        Stopping the named instance to save memory on the build worker.
+
+    .NOTES
+        The named instance is restarted at the end of the tests.
+#>
+Configuration DSC_SqlSetup_StopServicesInstance_Config
+{
+    Import-DscResource -ModuleName 'PSDscResources' -ModuleVersion '2.12.0.0'
+
+    node $AllNodes.NodeName
+    {
+        <#
+            Stopping the SQL Server Agent service for the named instance.
+            It will be restarted at the end of the tests.
+        #>
+        Service ('StopSqlServerAgentForInstance{0}' -f $Node.DatabaseEngineNamedInstanceName)
+        {
+            Name  = ('SQLAGENT${0}' -f $Node.DatabaseEngineNamedInstanceName)
+            State = 'Stopped'
+        }
+
+        <#
+            Stopping the Database Engine named instance. It will be restarted
+            at the end of the tests.
+        #>
+        Service ('StopSqlServerInstance{0}' -f $Node.DatabaseEngineNamedInstanceName)
+        {
+            Name   = ('MSSQL${0}' -f $Node.DatabaseEngineNamedInstanceName)
+            State  = 'Stopped'
+        }
+
+        # Service ('StopMultiAnalysisServicesInstance{0}' -f $Node.DatabaseEngineNamedInstanceName)
+        # {
+        #     Name  = ('MSOLAP${0}' -f $Node.DatabaseEngineNamedInstanceName)
+        #     State = 'Stopped'
+        # }
+    }
+}
