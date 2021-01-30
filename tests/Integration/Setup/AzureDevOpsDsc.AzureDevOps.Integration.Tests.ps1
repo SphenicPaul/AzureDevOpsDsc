@@ -30,13 +30,13 @@ $previousProgressPreference = $ProgressPreference
 $ProgressPreference = 'SilentlyContinue'
 
 
-# Download Azure DevOps Server media
+# Download Azure DevOps Server media (ISO)
 if (-not (Test-Path -Path $ConfigurationData.AllNodes.ImagePath))
 {
-    # Download the EXE used to download the ISO
-    Write-Verbose -Message "Start downloading the Azure DevOps Server media at $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss')..." -Verbose
-    Invoke-WebRequest -Uri $azureDevOpsServerVersionData.SourceDownloadUri -OutFile $ConfigurationData.AllNodes.DownloadIsoPath | Out-Null
-    Write-Verbose -Message ('Azure DevOps Server media file has SHA1 hash ''{0}''.' -f (Get-FileHash -Path $ConfigurationData.AllNodes.ImagePath -Algorithm 'SHA1').Hash) -Verbose
+    # Download the ISO
+    Write-Verbose -Message "Start downloading the Azure DevOps Server media (ISO) at $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss')..." -Verbose
+    Invoke-WebRequest -Uri $azureDevOpsServerVersionData.SourceIsoDownloadUri -OutFile $ConfigurationData.AllNodes.DownloadIsoPath | Out-Null
+    Write-Verbose -Message ('Azure DevOps Server media (ISO) file has SHA1 hash ''{0}''.' -f (Get-FileHash -Path $ConfigurationData.AllNodes.ImagePath -Algorithm 'SHA1').Hash) -Verbose
 
     # Return to previous 'ProgressPreference' value
     $ProgressPreference = $previousProgressPreference
@@ -49,10 +49,38 @@ if (-not (Test-Path -Path $ConfigurationData.AllNodes.ImagePath))
     }
     else
     {
-        Write-Verbose -Message "Finished downloading the Azure DevOps Server media iso at $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss')." -Verbose
+        Write-Verbose -Message "Finished downloading the Azure DevOps Server media (ISO) at $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss')." -Verbose
     }
 }
 else
 {
-    Write-Verbose -Message 'Azure DevOps Server media is already present/downloaded.' -Verbose
+    Write-Verbose -Message 'Azure DevOps Server media (ISO) is already present/downloaded.' -Verbose
+}
+
+
+# Download Azure DevOps Server media (EXE)
+if (-not (Test-Path -Path $ConfigurationData.AllNodes.DownloadExePath))
+{
+    # Download the EXE
+    Write-Verbose -Message "Start downloading the Azure DevOps Server media (EXE) at $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss')..." -Verbose
+    Invoke-WebRequest -Uri $azureDevOpsServerVersionData.SourceExeDownloadUri -OutFile $ConfigurationData.AllNodes.DownloadExePath | Out-Null
+    Write-Verbose -Message ('Azure DevOps Server media (EXE) file has SHA1 hash ''{0}''.' -f (Get-FileHash -Path $ConfigurationData.AllNodes.DownloadExePath -Algorithm 'SHA1').Hash) -Verbose
+
+    # Return to previous 'ProgressPreference' value
+    $ProgressPreference = $previousProgressPreference
+
+    # Double check that the Azure DevOps Server media was downloaded.
+    if (-not (Test-Path -Path $ConfigurationData.AllNodes.DownloadExePath))
+    {
+        Write-Warning -Message ('Azure DevOps Server media (EXE) could not be downloaded, can not run the integration test.')
+        return
+    }
+    else
+    {
+        Write-Verbose -Message "Finished downloading the Azure DevOps Server media (EXE) at $(Get-Date -Format 'yyyy-MM-dd hh:mm:ss')." -Verbose
+    }
+}
+else
+{
+    Write-Verbose -Message 'Azure DevOps Server media (EXE) is already present/downloaded.' -Verbose
 }
