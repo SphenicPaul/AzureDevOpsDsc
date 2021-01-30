@@ -229,7 +229,7 @@ Configuration DSC_SqlSetup_InstallDatabaseEngineNamedInstanceAsSystem_Config
 
     node $AllNodes.NodeName
     {
-        SqlSetup 'Integration_Test'
+        SqlSetup 'SqlSetup_AzureDevOps'
         {
             FeatureFlag            = @('DetectionSharedFeatures')
 
@@ -276,12 +276,31 @@ Configuration DSC_SqlSetup_InstallDatabaseEngineNamedInstanceAsSystem_Config
                     IsHadrEnable for SqlAlwaysOnService.
                 #>
                 Split-Path -Path $SqlInstallCredential.UserName -Leaf
+                <#
+                    Adding the Azure DevOps service as an admin in preparation
+                    for Azure DevOps installation/setup.
+                #>
+                Split-Path -Path $AzureDevOpsServiceCredential.UserName -Leaf
             )
 
             # This must be set if using SYSTEM account to install.
             ASSysAdminAccounts    = @(
                 Split-Path -Path $SqlAdministratorCredential.UserName -Leaf
             )
+        }
+
+        SqlMemory 'SqlMemory_To2GB'
+        {
+            Ensure               = 'Present'
+            DynamicAlloc         = $false
+            MinMemory            = 1024
+            MaxMemory            = 2048
+            ServerName           = $Node.NodeName
+            InstanceName         = $Node.DatabaseEngineNamedInstanceName
+
+            PsDscRunAsCredential = $SqlAdministratorCredential
+
+            DependsOn            = '[SqlSetup]SqlSetup_AzureDevOps'
         }
     }
 }
