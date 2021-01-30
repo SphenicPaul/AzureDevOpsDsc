@@ -76,8 +76,7 @@ $ConfigurationData = @{
             #SqlAgentServiceSecondaryAccountUserName = "$env:COMPUTERNAME\svc-SqlAgentSec"
             #SqlAgentServiceSecondaryAccountPassword = 'yig-C^Equ3'
 
-            #CertificateFile                         = $env:DscPublicCertificatePath
-
+            CertificateFile                         = $env:DscPublicCertificatePath
 
             AzureDevOpsServiceAccountUserName        = "$env:COMPUTERNAME\svc-AzureDevOps"
             AzureDevOpsServiceAccountPassword        = 'yig-C^Equ3'
