@@ -118,7 +118,8 @@ try
 
     Describe "$($script:sqlServerDscResourceName)_Integration" {
         BeforeAll {
-            $resourceId = "[$($script:sqlServerDscResourceFriendlyName)]Integration_Test"
+            $sqlSetupResourceId = "[$($script:sqlServerDscResourceFriendlyName)]SqlSetup_AzureDevOps"
+            $sqlMemoryResourceId = "[$($script:sqlMemoryDscResourceFriendlyName)]SqlMemory_To2GB"
         }
 
         $configurationName = "$($script:sqlServerDscResourceName)_CreateDependencies_Config"
@@ -186,10 +187,10 @@ try
                 } | Should -Not -Throw
             }
 
-            It 'Should have set the resource and all the parameters should match' {
+            It ('Should have set the "{0}" resource and all the parameters should match' -f $sqlSetupResourceId) {
                 $resourceCurrentState = $script:currentConfiguration | Where-Object -FilterScript {
                     $_.ConfigurationName -eq $configurationName `
-                    -and $_.ResourceId -eq $resourceId
+                    -and $_.ResourceId -eq $sqlSetupResourceId
                 }
 
                 $resourceCurrentState.Action                     | Should -Be 'Install'
@@ -263,6 +264,16 @@ try
                 'NT SERVICE\SQLWriter' | Should -BeIn $resourceCurrentState.SQLSysAdminAccounts
                 'NT SERVICE\Winmgmt' | Should -BeIn $resourceCurrentState.SQLSysAdminAccounts
                 'sa' | Should -BeIn $resourceCurrentState.SQLSysAdminAccounts
+            }
+
+            It ('Should have set the "{0}" resource and all the parameters should match' -f $sqlMemoryResourceId) {
+                $resourceCurrentState = $script:currentConfiguration | Where-Object -FilterScript {
+                    $_.ConfigurationName -eq $configurationName `
+                    -and $_.ResourceId -eq $sqlMemoryResourceId
+                }
+
+                $resourceCurrentState.MinMemory                  | Should -Be 1024
+                $resourceCurrentState.MaxMemory                  | Should -Be 2048
             }
 
             It 'Should return $true when Test-DscConfiguration is run' {
