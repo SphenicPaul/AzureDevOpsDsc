@@ -163,9 +163,6 @@ Import-Module 'PSDevOps' -Force
 
 $uri = 'http://{0}:8080' -f $env:COMPUTERNAME
 
-Write-Verbose -Message $('Attempting to connect to "{0}" (WHATIF)...' -f $uri) -Verbose
-Connect-ADO -Server $uri -Organization 'AzureDevOpsDsc' -UseDefaultCredentials -Verbose -WhatIf
-
 Write-Verbose -Message $('Attempting to connect to "{0}"...' -f $uri) -Verbose
 Connect-ADO -Server $uri -Organization 'AzureDevOpsDsc' -UseDefaultCredentials -Verbose
 
