@@ -208,37 +208,19 @@ try
                 $resourceCurrentState.InstanceDir                | Should -Be $ConfigurationData.AllNodes.InstanceDir
                 $resourceCurrentState.InstanceID                 | Should -Be $ConfigurationData.AllNodes.DatabaseEngineNamedInstanceName
                 $resourceCurrentState.InstanceName               | Should -Be $ConfigurationData.AllNodes.DatabaseEngineNamedInstanceName
-                $resourceCurrentState.ISSvcAccount               | Should -BeNullOrEmpty
-                $resourceCurrentState.ISSvcAccountUsername       | Should -BeNullOrEmpty
-                $resourceCurrentState.ProductKey                 | Should -BeNullOrEmpty
                 $resourceCurrentState.SAPwd                      | Should -BeNullOrEmpty
                 $resourceCurrentState.SecurityMode               | Should -Be 'SQL'
-                $resourceCurrentState.SetupProcessTimeout        | Should -BeNullOrEmpty
-                $resourceCurrentState.SourceCredential           | Should -BeNullOrEmpty
                 $resourceCurrentState.SourcePath                 | Should -Be "$($ConfigurationData.AllNodes.DriveLetter):\"
                 $resourceCurrentState.SQLCollation               | Should -Be $ConfigurationData.AllNodes.Collation
                 $resourceCurrentState.SQLSvcAccount              | Should -BeNullOrEmpty
                 $resourceCurrentState.SQLSvcAccountUsername      | Should -Be ('.\{0}' -f (Split-Path -Path $ConfigurationData.AllNodes.SqlServicePrimaryAccountUserName -Leaf))
                 $resourceCurrentState.SqlSvcStartupType          | Should -Be 'Automatic'
-                $resourceCurrentState.SQLTempDBDir               | Should -Be (Join-Path -Path $ConfigurationData.AllNodes.InstallSQLDataDir -ChildPath "$($ConfigurationData.AllNodes.SqlServerInstanceIdPrefix).$($ConfigurationData.AllNodes.DatabaseEngineNamedInstanceName)\MSSQL\Data")
-                $resourceCurrentState.SqlTempDbFileCount         | Should -Be $ConfigurationData.AllNodes.SqlTempDbFileCount
-                $resourceCurrentState.SqlTempDbFileSize          | Should -Be $ConfigurationData.AllNodes.SqlTempDbFileSize
-                $resourceCurrentState.SqlTempDbFileGrowth        | Should -Be $ConfigurationData.AllNodes.SqlTempDbFileGrowth
-                $resourceCurrentState.SQLTempDbLogDir            | Should -BeNullOrEmpty
-                $resourceCurrentState.SqlTempDbLogFileSize       | Should -Be $ConfigurationData.AllNodes.SqlTempDbLogFileSize
-                $resourceCurrentState.SqlTempDbLogFileGrowth     | Should -Be $ConfigurationData.AllNodes.SqlTempDbLogFileGrowth
-                $resourceCurrentState.SQLUserDBDir               | Should -Be $ConfigurationData.AllNodes.SQLUserDBDir
-                $resourceCurrentState.SQLUserDBLogDir            | Should -Be $ConfigurationData.AllNodes.SQLUserDBLogDir
-                $resourceCurrentState.SQLBackupDir               | Should -Be $ConfigurationData.AllNodes.SQLBackupDir
-                $resourceCurrentState.SQMReporting               | Should -BeNullOrEmpty
-                $resourceCurrentState.SuppressReboot             | Should -BeNullOrEmpty
-                $resourceCurrentState.UpdateEnabled              | Should -BeNullOrEmpty
-                $resourceCurrentState.UpdateSource               | Should -BeNullOrEmpty
-                $resourceCurrentState.UseEnglish                 | Should -BeTrue
+
 
                 # Verify all the accounts are returned in the property SQLSysAdminAccounts.
                 $ConfigurationData.AllNodes.SqlAdministratorAccountUserName | Should -BeIn $resourceCurrentState.SQLSysAdminAccounts
                 $ConfigurationData.AllNodes.SqlInstallAccountUserName | Should -BeIn $resourceCurrentState.SQLSysAdminAccounts
+                $ConfigurationData.AllNodes.AzureDevOpsServiceAccountUserName | Should -BeIn $resourceCurrentState.SQLSysAdminAccounts
                 "NT SERVICE\MSSQL`$$($ConfigurationData.AllNodes.DatabaseEngineNamedInstanceName)" | Should -BeIn $resourceCurrentState.SQLSysAdminAccounts
                 "NT SERVICE\SQLAgent`$$($ConfigurationData.AllNodes.DatabaseEngineNamedInstanceName)" | Should -BeIn $resourceCurrentState.SQLSysAdminAccounts
                 'NT SERVICE\SQLWriter' | Should -BeIn $resourceCurrentState.SQLSysAdminAccounts
