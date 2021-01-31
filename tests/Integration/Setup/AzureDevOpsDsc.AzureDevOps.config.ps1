@@ -21,7 +21,7 @@ $azureDevOpsServerVersionData = @{
     LogsDirectoryPath = 'C:\AzureDevOpsServer\Logs'
 
     # SQL Server information
-    SqlInstance                             = '.\AZDEVOPS'
+    SqlInstance                             = 'localhost\AZDEVOPS'
 }
 
 
