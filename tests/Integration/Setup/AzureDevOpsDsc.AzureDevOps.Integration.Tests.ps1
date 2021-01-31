@@ -123,10 +123,10 @@ else
 
 # Install Azure DevOps Server using the EXE
 Write-Verbose -Message 'Installing Azure DevOps Server...' -Verbose
-$downloadExeArgumentList = '/CustomInstallPath {0}" /Full /NoRefresh /NoRestart /NoWeb /Passive /ProductKey TRIAL /Silent /Log {1}' -f $ConfigurationData.AllNodes.InstallPath, $ConfigurationData.AllNodes.LogFilePath
+$downloadExeArgumentList = '/CustomInstallPath {0} /Full /NoRefresh /NoRestart /Passive /ProductKey TRIAL /Silent /Log {1}' -f $ConfigurationData.AllNodes.InstallPath, $ConfigurationData.AllNodes.LogFilePath
 Start-Process -FilePath $ConfigurationData.AllNodes.DownloadExePath `
               -ArgumentList $downloadExeArgumentList `
-              -Wait
+              -Wait -Verbose
 Write-Verbose -Message 'Successfully installed Azure DevOps Server.' -Verbose
 
 Write-Verbose -Message 'Outputting Azure DevOps Server, installation logs...' -Verbose
