@@ -134,12 +134,22 @@ Show-AzureDevOpsLog -Path $($azureDevOpsServerVersionData.LogsDirectoryPath + '\
 
 
 # Configure Azure DevOps Server using TFSCONFIG
-Write-Verbose -Message 'Configuring Azure DevOps Server...' -Verbose
 $tfsConfigExePath = Join-Path -Path $(Join-Path -Path $ConfigurationData.AllNodes.InstallPath -ChildPath 'Tools') -ChildPath 'tfsconfig.exe'
-$tfsConfigExeArgumentList = '' # TODO: See https://docs.microsoft.com/en-us/azure/devops/server/command-line/tfsconfig-cmd?view=azure-devops-2019#unattend
-#Start-Process -FilePath $tfsConfigExePath `
-#              -ArgumentList $tfsConfigExeArgumentList `
-#              -Wait
+$tfsConfigFilePath = Join-Path -Path $PSScriptRoot -ChildPath 'AzureDevOpsDsc.AzureDevOps.config.ini'
+
+Write-Verbose -Message 'Verifying Azure DevOps Server configuration...' -Verbose
+
+$tfsConfigExeArgumentList = 'unattend /configure /unattendfile:{0} /verify' -f $tfsConfigFilePath
+Start-Process -FilePath $tfsConfigExePath `
+              -ArgumentList $tfsConfigExeArgumentList `
+              -Wait -Verbose
+Write-Verbose -Message 'Successfully verified Azure DevOps Server configuration.' -Verbose
+
+Write-Verbose -Message 'Configuring Azure DevOps Server...' -Verbose
+$tfsConfigExeArgumentList = 'unattend /configure /unattendfile:{0}' -f $tfsConfigFilePath
+Start-Process -FilePath $tfsConfigExePath `
+              -ArgumentList $tfsConfigExeArgumentList `
+              -Wait -Verbose
 Write-Verbose -Message 'Successfully configured Azure DevOps Server.' -Verbose
 
 Write-Verbose -Message 'Outputting Azure DevOps Server, configuration logs...' -Verbose
