@@ -333,11 +333,11 @@ Configuration DSC_SqlSetup_StopServicesInstance_Config
             Stopping the Database Engine named instance. It will be restarted
             at the end of the tests.
         #>
-        Service ('StopSqlServerInstance{0}' -f $Node.DatabaseEngineNamedInstanceName)
-        {
-            Name   = ('MSSQL${0}' -f $Node.DatabaseEngineNamedInstanceName)
-            State  = 'Stopped'
-        }
+        # Service ('StopSqlServerInstance{0}' -f $Node.DatabaseEngineNamedInstanceName)
+        # {
+        #     Name   = ('MSSQL${0}' -f $Node.DatabaseEngineNamedInstanceName)
+        #     State  = 'Stopped'
+        # }
 
         # Service ('StopMultiAnalysisServicesInstance{0}' -f $Node.DatabaseEngineNamedInstanceName)
         # {
