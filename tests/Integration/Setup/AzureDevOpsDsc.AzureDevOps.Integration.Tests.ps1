@@ -37,7 +37,7 @@ function Show-AzureDevOpsLog
         $Path
     )
 
-    $summaryLogPath = Get-ChildItem -Path $$Path |
+    $summaryLogPath = Get-ChildItem -Path $Path |
         Sort-Object -Property LastWriteTime -Descending |
         Select-Object -First 1
 
