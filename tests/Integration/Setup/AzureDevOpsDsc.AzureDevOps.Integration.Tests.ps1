@@ -161,9 +161,18 @@ Write-Verbose -Message 'Installing/Importing "PSDevOps" module...' -Verbose
 Find-Module 'PSDevOps' | Install-Module -Scope CurrentUser -Force
 Import-Module 'PSDevOps' -Force
 
-$uri = 'http://localhost:8080'
+$uri = 'http://{0}:8080' -f $env:COMPUTERNAME
+
+Write-Verbose -Message $('Attempting to connect to "{0}" (WHATIF)...' -f $uri) -Verbose
+Connect-ADO -Server $uri -Organization 'AzureDevOpsDsc' -UseDefaultCredentials -Verbose -WhatIf
+
 Write-Verbose -Message $('Attempting to connect to "{0}"...' -f $uri) -Verbose
 Connect-ADO -Server $uri -Organization 'AzureDevOpsDsc' -UseDefaultCredentials -Verbose
 
+Write-Verbose -Message 'Attempting to add project (WHATIF) ...' -Verbose
+New-ADOProject -Server $uri -Organization 'AzureDevOpsDsc' `
+               -Name 'TestAzureDevOpsDscProject' -Description 'TestAzureDevOpsDscProjectDesc' -Confirm -Verbose -WhatIf
+
 Write-Verbose -Message 'Attempting to add project ...' -Verbose
-New-ADOProject -Name 'TestAzureDevOpsDscProject' -Description 'TestAzureDevOpsDscProjectDesc' -Confirm
+New-ADOProject -Server $uri -Organization 'AzureDevOpsDsc' `
+               -Name 'TestAzureDevOpsDscProject' -Description 'TestAzureDevOpsDscProjectDesc' -Confirm -Verbose
