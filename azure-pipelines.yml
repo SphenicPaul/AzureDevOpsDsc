@@ -195,7 +195,7 @@ stages:
               ./build.ps1 -Tasks test -CodeCoverageThreshold 0 -PesterScript @(
                   # Run the integration tests in a specific group order.
                   # Group 1
-                  'tests/Integration/Setup/AzureDevOpsDsc.SqlServer.Integration.Tests.ps1'
+                  #'tests/Integration/Setup/AzureDevOpsDsc.SqlServer.Integration.Tests.ps1'
                   'tests/Integration/Setup/AzureDevOpsDsc.AzureDevOps.Integration.Tests.ps1'
                   # Group 2
                   #'tests/Integration/Classes/AzDevOpsProject.Integration.Tests.ps1'
