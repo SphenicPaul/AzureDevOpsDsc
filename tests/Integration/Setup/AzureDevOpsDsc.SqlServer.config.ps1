@@ -281,6 +281,9 @@ Configuration DSC_SqlSetup_InstallDatabaseEngineNamedInstanceAsSystem_Config
                     for Azure DevOps installation/setup.
                 #>
                 Split-Path -Path $AzureDevOpsServiceCredential.UserName -Leaf
+
+                # Local service account
+                'NT AUTHORITY\LOCAL SERVICE'
             )
 
             # This must be set if using SYSTEM account to install.

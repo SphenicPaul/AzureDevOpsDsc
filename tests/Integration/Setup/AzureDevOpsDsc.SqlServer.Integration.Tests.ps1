@@ -221,6 +221,7 @@ try
                 $ConfigurationData.AllNodes.SqlAdministratorAccountUserName | Should -BeIn $resourceCurrentState.SQLSysAdminAccounts
                 $ConfigurationData.AllNodes.SqlInstallAccountUserName | Should -BeIn $resourceCurrentState.SQLSysAdminAccounts
                 $ConfigurationData.AllNodes.AzureDevOpsServiceAccountUserName | Should -BeIn $resourceCurrentState.SQLSysAdminAccounts
+                'NT AUTHORITY\LOCAL SERVICE' | Should -BeIn $resourceCurrentState.SQLSysAdminAccounts
                 "NT SERVICE\MSSQL`$$($ConfigurationData.AllNodes.DatabaseEngineNamedInstanceName)" | Should -BeIn $resourceCurrentState.SQLSysAdminAccounts
                 "NT SERVICE\SQLAgent`$$($ConfigurationData.AllNodes.DatabaseEngineNamedInstanceName)" | Should -BeIn $resourceCurrentState.SQLSysAdminAccounts
                 'NT SERVICE\SQLWriter' | Should -BeIn $resourceCurrentState.SQLSysAdminAccounts
