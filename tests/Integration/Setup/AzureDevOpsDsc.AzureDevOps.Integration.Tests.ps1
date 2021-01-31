@@ -154,3 +154,16 @@ Write-Verbose -Message 'Successfully configured Azure DevOps Server.' -Verbose
 
 Write-Verbose -Message 'Outputting Azure DevOps Server, configuration logs...' -Verbose
 Show-AzureDevOpsLog -Path 'C:\ProgramData\Microsoft\Azure DevOps\Server Configuration\Logs\*.log'
+
+
+
+Write-Verbose -Message 'Installing/Importing "PSDevOps" module...' -Verbose
+Find-Module 'PSDevOps' | Install-Module -Scope CurrentUser -Force
+Import-Module 'PSDevOps' -Force
+
+$uri = 'http://localhost:8080'
+Write-Verbose -Message $('Attempting to connect to "{0}"...' -f $uri) -Verbose
+Connect-ADO -Server $uri -Organization 'AzureDevOpsDsc' -UseDefaultCredentials -Verbose
+
+Write-Verbose -Message 'Attempting to add project ...' -Verbose
+New-ADOProject -Name 'TestAzureDevOpsDscProject' -Description 'TestAzureDevOpsDscProjectDesc' -Confirm
